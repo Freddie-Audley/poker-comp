@@ -10,4 +10,4 @@ def defaultAI(state: GameState) -> Action: # This ai runs if myAI raises an exce
     return Action.check() if state.my_player.chips_bet == max(player.chips_bet for player in state.players) else Action.fold()
 
 def allIn(state: GameState) -> Action:    # My really sophisticated algorithm
-    return Action.raise_by(99999999999)
+    return Action.raise_by(9999999)
