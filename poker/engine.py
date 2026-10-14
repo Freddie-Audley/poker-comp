@@ -81,6 +81,7 @@ class Match:
         self.orbits_since_cut = 0
         self.buttons_this_orbit: set[int] = set()
         self.timeout = self.rules.timeout
+        self.ante = 0  # The ante for the current hand
 
         self.rng = random.Random(seed)
         self.button = self.rng.randrange(len(self.seats))
@@ -131,7 +132,7 @@ class Match:
 
         self.hands_at_level += 1
         self.hands_since_cut += 1
-        ante = rules.ante if self.orbits_completed >= rules.ante_from_orbit - 1 else 0
+        ante = self.ante = rules.ante if self.orbits_completed >= rules.ante_from_orbit - 1 else 0
         total_chips = sum(seat.stack for seat in self.seats)
 
         for seat in self.seats:
@@ -347,7 +348,7 @@ class Match:
         my_player = MyPlayer(blind=seat.blind, chips_in_stack=seat.stack, chips_bet=seat.bet, hole_cards=set(seat.hole_cards))
         players = [my_player if other is seat else Player(blind=other.blind, has_folded=other.folded, chips_in_stack=other.stack, chips_bet=other.bet) for other in self.seats if other.dealt]
 
-        return GameState(my_player=my_player, players=players, chips_in_pot=self.pot, community_cards=set(self.board))
+        return GameState(my_player=my_player, players=players, chips_in_pot=self.pot, community_cards=set(self.board), small_blind=self.small_blind, big_blind=self.big_blind, ante=self.ante)
 
     def return_uncalled(self):
         # If nobody matched the biggest bet, the unmatched part goes back

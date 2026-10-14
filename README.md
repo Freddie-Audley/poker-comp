@@ -153,6 +153,7 @@ As in a tournament, the blinds go up as the match goes on. They go up a level ev
 All of these numbers are set in `poker/rules.yaml`, along with rules which are turned off to begin with, like antes.
 
 - `chips_bet` is how many chips a player has put in during the current betting round, so the amount you need to call is the biggest `chips_bet` at the table minus your own. `chips_in_pot` is everything bet in the hand so far.
+- `small_blind`, `big_blind` and `ante` are the sizes for the current hand, so your AI can size its bets as the blinds go up.
 - `Action.raise_by(amount)` calls the current bet and then raises it by `amount` more. There is no minimum raise, and if it is more than you have then you go all in.
 - `Action.call()` when you can't afford the bet puts you all in.
 - If your AI raises an exception, takes too long, doesn't return an `Action` or checks when there is a bet to call, then it checks if it can and folds if it can't, the same as `defaultAI`.
