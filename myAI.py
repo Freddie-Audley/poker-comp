@@ -7,4 +7,4 @@ def myAI(state: GameState) -> Action:
 
 
 def allIn(state: GameState) -> Action:    # My really sophisticated algorithm
-    return Action.raise_by(1)
+    return Action.raise_by(2)
