@@ -10,3 +10,5 @@ def allIn(state: GameState) -> Action:
     if max(player.chips_bet for player in state.players) - state.my_player.chips_bet > state.my_player.chips_in_pot // 2:
         return Action.fold()
     return Action.raise_by(1)
+
+# Gamble attempt 2
