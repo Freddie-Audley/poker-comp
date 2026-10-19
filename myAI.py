@@ -498,7 +498,53 @@ def _decide(state):
         """raise_by is the extra increment on top of calling."""
         amount = int(max(2 * bb, frac * (pot + to_call)))
 
-        if stack is
+        if stack is not None:
+            max_increment = max(0, int(stack - to_call))
+            amount = min(amount, max_increment)
+
+        return amount
+
+    # Nothing to call: bet for value or check.
+    if to_call <= 0:
+        bet_edge = PREFLOP_RAISE_EDGE if preflop else BET_EDGE
+        if edge > bet_edge and random.random() < 0.9:
+            amount = raise_size(
+                BET_FRACTION + min(0.4, edge - bet_edge)
+            )
+            if amount > 0:
+                return Action.raise_by(amount)
+
+        return Action.check()
+
+    # Facing a bet.
+    pot_odds = (
+        to_call / float(pot + to_call)
+        if pot + to_call > 0 else 1.0
+    )
+
+    need = pot_odds + CALL_MARGIN
+
+    if stack is not None and stack > 0:
+        need += SHOVE_PENALTY * min(
+            1.0, to_call / float(stack)
+        )
+
+    # Preflop, pot odds understate a hand's value (blinds, later streets),
+    # so compare against fair share when the price is a modest part of the stack.
+    if preflop and (stack is None or to_call <= PREFLOP_CALL_STACK_FRAC * stack):
+        need = min(need, fair + PREFLOP_CALL_MARGIN)
+
+    raise_edge = PREFLOP_RAISE_EDGE if preflop else RAISE_EDGE
+
+    if edge > raise_edge and random.random() < 0.8:
+        amount = raise_size(BET_FRACTION)
+        if amount > 0:
+            return Action.raise_by(amount)
+
+    if equity > need:
+        return Action.call()
+
+    return Action.fold()
 
 
 def myAI(state: GameState) -> Action:
