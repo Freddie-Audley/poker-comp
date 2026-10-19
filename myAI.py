@@ -475,19 +475,18 @@ def _decide(state):
         if stack is None or to_call <= SET_MINE_MAX_STACK_FRAC * stack:
             return Action.call()
 
-    # Preflop floor: playable hands never fold to a cheap bet, whatever the model says.
-    if preflop and to_call > 0:
+    # AK/AQ/AJs-type hands: never fold preflop, raise when unopened.
+    if preflop:
         hi, lo = max(ranks), min(ranks)
         suited = hole[0] // 13 == hole[1] // 13
-        playable = (
-            (hi == 12 and (lo >= 8 or suited))             # AT+, Axs
-            or (hi == 11 and lo >= 8)                      # KT+
-            or (suited and hi >= 8 and hi - lo <= 3)       # QJs, JTs, T9s, KQs...
-            or (hi == 10 and lo >= 9)                      # QJ
-        )
-        cheap = stack is None or to_call <= PREFLOP_CALL_STACK_FRAC * stack
-        if playable and cheap:
-            return Action.call()
+        big_hand = (hi == 12 and lo >= 10) or (hi == 12 and lo == 9 and suited)
+        if big_hand:
+            if to_call > 0:
+                return Action.call()
+            amount = int(2 * bb)
+            if stack is not None:
+                amount = min(amount, int(stack))
+            return Action.raise_by(amount) if amount > 0 else Action.check()
 
     # Everything else uses the trained model.
     live_others = [
