@@ -444,9 +444,10 @@ def _decide(state):
 
     bb = _get(state, ("big_blind",), 20) or 20
     stack = _stack(me)
+    preflop = not board
 
     ranks = [card % 13 for card in hole]
-    is_pair = not board and ranks[0] == ranks[1]
+    is_pair = preflop and ranks[0] == ranks[1]
     is_premium_pair = is_pair and ranks[0] >= PREMIUM_PAIR_MIN_RANK
 
     if DEBUG:
@@ -497,43 +498,7 @@ def _decide(state):
         """raise_by is the extra increment on top of calling."""
         amount = int(max(2 * bb, frac * (pot + to_call)))
 
-        if stack is not None:
-            max_increment = max(0, int(stack - to_call))
-            amount = min(amount, max_increment)
-
-        return amount
-
-    if to_call <= 0:
-        if edge > BET_EDGE and random.random() < 0.9:
-            amount = raise_size(
-                BET_FRACTION + min(0.4, edge - BET_EDGE)
-            )
-            if amount > 0:
-                return Action.raise_by(amount)
-
-        return Action.check()
-
-    pot_odds = (
-        to_call / float(pot + to_call)
-        if pot + to_call > 0 else 1.0
-    )
-
-    need = pot_odds + CALL_MARGIN
-
-    if stack is not None and stack > 0:
-        need += SHOVE_PENALTY * min(
-            1.0, to_call / float(stack)
-        )
-
-    if edge > RAISE_EDGE and random.random() < 0.8:
-        amount = raise_size(BET_FRACTION)
-        if amount > 0:
-            return Action.raise_by(amount)
-
-    if equity > need:
-        return Action.call()
-
-    return Action.fold()
+        if stack is
 
 
 def myAI(state: GameState) -> Action:
