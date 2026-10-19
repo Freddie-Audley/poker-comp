@@ -207,6 +207,10 @@ CALL_MARGIN = 0.03
 SHOVE_PENALTY = 0.12
 BET_FRACTION = 0.6
 
+PREFLOP_RAISE_EDGE = 0.30
+PREFLOP_CALL_STACK_FRAC = 0.15
+PREFLOP_CALL_MARGIN = 0.04
+
 PREMIUM_PAIR_MIN_RANK = 8       # TT+ (deuce=0 ... ten=8, ace=12)
 SET_MINE_MAX_STACK_FRAC = 0.15  # call cheap preflop bets with any other pair
 
